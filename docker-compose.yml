@@ -1,6 +1,6 @@
 version: '2'
 services:
-  web:
+  backend:
     image: maxbey/schedule-backend
     depends_on:
       - db
@@ -11,8 +11,6 @@ services:
       - DJANGO_SETTINGS_MODULE=app.settings.settings
     ports:
       - "8000:8000"
-    volumes:
-      - ./schedule/static:/usr/src/app/static
     expose:
       - "8000"
 
