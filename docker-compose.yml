@@ -5,6 +5,8 @@ services:
     depends_on:
       - db
     environment:
+      - CONTAINER_BEHAVIOUR=DJANGO
+      - REDIS_URL=redis://redis:6379/0
       - DATABASE_URL=postgres://postgres@db/postgres
       - SECRET_KEY=somesecretvalue
       - DJANGO_CONFIGURATION=Production
@@ -23,7 +25,27 @@ services:
 
   db:
     image: postgres
+    volumes:
+      - /var/www/database:/var/lib/postgresql/data
     expose:
       - "5432"
     ports:
       - "5432:5432"
+
+  celery:
+    image: maxbey/schedule-backend:latest
+    environment:
+      - CONTAINER_BEHAVIOUR=CELERY
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgres://postgres@db/postgres
+      - SECRET_KEY=somesecretvalue
+      - DJANGO_CONFIGURATION=Production
+      - DJANGO_SETTINGS_MODULE=app.settings.settings
+    depends_on:
+      - db
+      - redis
+
+  redis:
+    image: redis
+    expose:
+      - "6379"
